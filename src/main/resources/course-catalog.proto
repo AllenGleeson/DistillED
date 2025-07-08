@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.distilled.coursecatalog";
+option java_outer_classname = "CourseCatalogProto";
+
+package coursecatalog;
+
+// The course catalog service definition.
+service CourseCatalog {
+  // Returns all courses
+  rpc ListCourses (Empty) returns (CourseList);
+
+  // Returns a course by ID
+  rpc GetCourse (CourseRequest) returns (Course);
+}
+
+// Request message to get a course
+message CourseRequest {
+  int32 id = 1;
+}
+
+// A course object
+message Course {
+  int32 id = 1;
+  string title = 2;
+  string description = 3;
+  string instructor = 4;
+  int32 duration_minutes = 5;
+}
+
+// A list of courses
+message CourseList {
+  repeated Course courses = 1;
+}
+
+// Empty request
+message Empty {}
