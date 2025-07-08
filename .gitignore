@@ -1,4 +1,35 @@
-/.classpath
-/.project
-/.settings
-/target
+# === Eclipse-specific ===
+.project
+.classpath
+.settings/
+
+# === Build directories ===
+bin/
+build/
+target/
+out/
+
+# === Gradle/Maven ===
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Logs and temp files
+*.log
+*.tmp
+
+# === Generated protobuf files ===
+**/*_pb2.java
+**/*Grpc.java
+
+# === OS-specific ===
+.DS_Store
+Thumbs.db
+
+# === Java compiled files ===
+*.class
+
+# === JAR/WAR files ===
+*.jar
+*.war
+*.ear
