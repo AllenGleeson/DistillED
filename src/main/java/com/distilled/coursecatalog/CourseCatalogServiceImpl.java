@@ -56,10 +56,10 @@ public class CourseCatalogServiceImpl extends CourseCatalogGrpc.CourseCatalogImp
     }
 
     @Override
-    public void listCourses(Empty request, StreamObserver<CourseList> responseObserver) {
-        CourseList.Builder courseListBuilder = CourseList.newBuilder();
-        courseListBuilder.addAllCourses(courses); // Add all courses
-        responseObserver.onNext(courseListBuilder.build());
+    public void listCourses(Empty request, StreamObserver<Course> responseObserver) {
+        for (Course course : courses) {
+            responseObserver.onNext(course);
+        }
         responseObserver.onCompleted();
     }
 

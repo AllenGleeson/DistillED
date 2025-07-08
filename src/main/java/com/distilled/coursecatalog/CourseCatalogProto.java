@@ -48,13 +48,12 @@ public final class CourseCatalogProto {
       "id\030\001 \001(\005\022\r\n\005title\030\002 \001(\t\022\023\n\013description\030\003" +
       " \001(\t\022\022\n\ninstructor\030\004 \001(\t\022\030\n\020duration_min" +
       "utes\030\005 \001(\005\"4\n\nCourseList\022&\n\007courses\030\001 \003(" +
-      "\0132\025.coursecatalog.Course\"\007\n\005Empty2\221\001\n\rCo" +
-      "urseCatalog\022>\n\013ListCourses\022\024.coursecatal" +
-      "og.Empty\032\031.coursecatalog.CourseList\022@\n\tG" +
-      "etCourse\022\034.coursecatalog.CourseRequest\032\025" +
-      ".coursecatalog.CourseB3\n\033com.distilled.c" +
-      "oursecatalogB\022CourseCatalogProtoP\001b\006prot" +
-      "o3"
+      "\0132\025.coursecatalog.Course\"\007\n\005Empty2\217\001\n\rCo" +
+      "urseCatalog\022<\n\013ListCourses\022\024.coursecatal" +
+      "og.Empty\032\025.coursecatalog.Course0\001\022@\n\tGet" +
+      "Course\022\034.coursecatalog.CourseRequest\032\025.c" +
+      "oursecatalog.CourseB3\n\033com.distilled.cou" +
+      "rsecatalogB\022CourseCatalogProtoP\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

@@ -8,8 +8,8 @@ package coursecatalog;
 
 // The course catalog service definition.
 service CourseCatalog {
-  // Returns all courses
-  rpc ListCourses (Empty) returns (CourseList);
+  // Streams all courses one by one
+  rpc ListCourses (Empty) returns (stream Course);
 
   // Returns a course by ID
   rpc GetCourse (CourseRequest) returns (Course);

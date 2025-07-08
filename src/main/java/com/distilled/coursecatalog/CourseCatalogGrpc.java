@@ -31,29 +31,29 @@ public final class CourseCatalogGrpc {
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<com.distilled.coursecatalog.Empty,
-      com.distilled.coursecatalog.CourseList> getListCoursesMethod;
+      com.distilled.coursecatalog.Course> getListCoursesMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "ListCourses",
       requestType = com.distilled.coursecatalog.Empty.class,
-      responseType = com.distilled.coursecatalog.CourseList.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+      responseType = com.distilled.coursecatalog.Course.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
   public static io.grpc.MethodDescriptor<com.distilled.coursecatalog.Empty,
-      com.distilled.coursecatalog.CourseList> getListCoursesMethod() {
-    io.grpc.MethodDescriptor<com.distilled.coursecatalog.Empty, com.distilled.coursecatalog.CourseList> getListCoursesMethod;
+      com.distilled.coursecatalog.Course> getListCoursesMethod() {
+    io.grpc.MethodDescriptor<com.distilled.coursecatalog.Empty, com.distilled.coursecatalog.Course> getListCoursesMethod;
     if ((getListCoursesMethod = CourseCatalogGrpc.getListCoursesMethod) == null) {
       synchronized (CourseCatalogGrpc.class) {
         if ((getListCoursesMethod = CourseCatalogGrpc.getListCoursesMethod) == null) {
           CourseCatalogGrpc.getListCoursesMethod = getListCoursesMethod = 
-              io.grpc.MethodDescriptor.<com.distilled.coursecatalog.Empty, com.distilled.coursecatalog.CourseList>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              io.grpc.MethodDescriptor.<com.distilled.coursecatalog.Empty, com.distilled.coursecatalog.Course>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
               .setFullMethodName(generateFullMethodName(
                   "coursecatalog.CourseCatalog", "ListCourses"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   com.distilled.coursecatalog.Empty.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.distilled.coursecatalog.CourseList.getDefaultInstance()))
+                  com.distilled.coursecatalog.Course.getDefaultInstance()))
                   .setSchemaDescriptor(new CourseCatalogMethodDescriptorSupplier("ListCourses"))
                   .build();
           }
@@ -126,11 +126,11 @@ public final class CourseCatalogGrpc {
 
     /**
      * <pre>
-     * Returns all courses
+     * Streams all courses one by one
      * </pre>
      */
     public void listCourses(com.distilled.coursecatalog.Empty request,
-        io.grpc.stub.StreamObserver<com.distilled.coursecatalog.CourseList> responseObserver) {
+        io.grpc.stub.StreamObserver<com.distilled.coursecatalog.Course> responseObserver) {
       asyncUnimplementedUnaryCall(getListCoursesMethod(), responseObserver);
     }
 
@@ -148,10 +148,10 @@ public final class CourseCatalogGrpc {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
             getListCoursesMethod(),
-            asyncUnaryCall(
+            asyncServerStreamingCall(
               new MethodHandlers<
                 com.distilled.coursecatalog.Empty,
-                com.distilled.coursecatalog.CourseList>(
+                com.distilled.coursecatalog.Course>(
                   this, METHODID_LIST_COURSES)))
           .addMethod(
             getGetCourseMethod(),
@@ -187,12 +187,12 @@ public final class CourseCatalogGrpc {
 
     /**
      * <pre>
-     * Returns all courses
+     * Streams all courses one by one
      * </pre>
      */
     public void listCourses(com.distilled.coursecatalog.Empty request,
-        io.grpc.stub.StreamObserver<com.distilled.coursecatalog.CourseList> responseObserver) {
-      asyncUnaryCall(
+        io.grpc.stub.StreamObserver<com.distilled.coursecatalog.Course> responseObserver) {
+      asyncServerStreamingCall(
           getChannel().newCall(getListCoursesMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -231,11 +231,12 @@ public final class CourseCatalogGrpc {
 
     /**
      * <pre>
-     * Returns all courses
+     * Streams all courses one by one
      * </pre>
      */
-    public com.distilled.coursecatalog.CourseList listCourses(com.distilled.coursecatalog.Empty request) {
-      return blockingUnaryCall(
+    public java.util.Iterator<com.distilled.coursecatalog.Course> listCourses(
+        com.distilled.coursecatalog.Empty request) {
+      return blockingServerStreamingCall(
           getChannel(), getListCoursesMethod(), getCallOptions(), request);
     }
 
@@ -273,17 +274,6 @@ public final class CourseCatalogGrpc {
 
     /**
      * <pre>
-     * Returns all courses
-     * </pre>
-     */
-    public com.google.common.util.concurrent.ListenableFuture<com.distilled.coursecatalog.CourseList> listCourses(
-        com.distilled.coursecatalog.Empty request) {
-      return futureUnaryCall(
-          getChannel().newCall(getListCoursesMethod(), getCallOptions()), request);
-    }
-
-    /**
-     * <pre>
      * Returns a course by ID
      * </pre>
      */
@@ -316,7 +306,7 @@ public final class CourseCatalogGrpc {
       switch (methodId) {
         case METHODID_LIST_COURSES:
           serviceImpl.listCourses((com.distilled.coursecatalog.Empty) request,
-              (io.grpc.stub.StreamObserver<com.distilled.coursecatalog.CourseList>) responseObserver);
+              (io.grpc.stub.StreamObserver<com.distilled.coursecatalog.Course>) responseObserver);
           break;
         case METHODID_GET_COURSE:
           serviceImpl.getCourse((com.distilled.coursecatalog.CourseRequest) request,
