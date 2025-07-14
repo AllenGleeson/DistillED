@@ -1,5 +1,7 @@
 package com.distilled.coursecatalog;
 
+import java.util.Iterator;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -12,9 +14,10 @@ public class CourseCatalogClient {
         CourseCatalogGrpc.CourseCatalogBlockingStub stub = CourseCatalogGrpc.newBlockingStub(channel);
 
         // Call listCourses
-        CourseList courseList = stub.listCourses(Empty.newBuilder().build());
+        Iterator<Course> courseIterator = stub.listCourses(Empty.newBuilder().build());
         System.out.println("All courses:");
-        for (Course course : courseList.getCoursesList()) {
+        while (courseIterator.hasNext()) {
+            Course course = courseIterator.next();
             System.out.println(course);
         }
 
