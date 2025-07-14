@@ -1,7 +1,6 @@
 package com.distilled.gui;
 
 import com.distilled.coursecatalog.*;
-
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -14,16 +13,28 @@ public class CourseCatalogPanel extends JPanel {
 
     private final JPanel courseListPanel = new JPanel();
     private final JTextArea courseDetailsArea = new JTextArea();
-    private final CourseCatalogGrpc.CourseCatalogBlockingStub stub;
+    private CourseCatalogGrpc.CourseCatalogBlockingStub stub;
 
     public CourseCatalogPanel() {
-        // gRPC stub
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051)
-                .usePlaintext()
-                .build();
-        stub = CourseCatalogGrpc.newBlockingStub(channel);
-
         setLayout(new BorderLayout());
+
+        // Try to discover gRPC service
+        try {
+            String host = GrpcServiceDiscovery.getServiceHost();
+            int port = GrpcServiceDiscovery.getServicePort();
+
+            ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
+                    .usePlaintext()
+                    .build();
+
+            stub = CourseCatalogGrpc.newBlockingStub(channel);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Failed to discover gRPC service: " + e.getMessage(),
+                    "Connection Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         // --- Course List Panel (Left side) ---
         courseListPanel.setLayout(new BoxLayout(courseListPanel, BoxLayout.Y_AXIS));
@@ -86,8 +97,8 @@ public class CourseCatalogPanel extends JPanel {
 
     private String courseToString(Course c) {
         return String.format(
-            "ID: %d\nTitle: %s\n\nDescription:\n%s\n\nInstructor: %s\nDuration: %d minutes",
-            c.getId(), c.getTitle(), c.getDescription(), c.getInstructor(), c.getDurationMinutes()
+                "ID: %d\nTitle: %s\n\nDescription:\n%s\n\nInstructor: %s\nDuration: %d minutes",
+                c.getId(), c.getTitle(), c.getDescription(), c.getInstructor(), c.getDurationMinutes()
         );
     }
 }

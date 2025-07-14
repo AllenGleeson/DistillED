@@ -1,5 +1,7 @@
 package com.distilled.server;
 
+import java.io.IOException;
+
 import com.distilled.coursecatalog.CourseCatalogServiceImpl;
 import com.distilled.enrolment.EnrolmentServiceImpl;
 
@@ -8,31 +10,23 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
 public class GrpcServer {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        int port = 50051;
 
-    public static void main(String[] args) {
-        final int PORT = 50051;
+        Server server = ServerBuilder.forPort(port)
+            .addService(new CourseCatalogServiceImpl())
+            .addService(new EnrolmentServiceImpl())
+            .build()
+            .start();
 
-        try {
-            Server server = ServerBuilder.forPort(PORT)
-                    .addService(new CourseCatalogServiceImpl())
-                    .addService(new EnrolmentServiceImpl())
-                    .build();
+        // Register service using JmDNS
+        GrpcServiceAdvertiser advertiser = new GrpcServiceAdvertiser();
+        advertiser.registerService("DistillED-gRPC", port);
 
-            server.start();
-            System.out.println("✅ gRPC server started on port " + PORT);
+        System.out.println("Server started on port " + port);
+        server.awaitTermination();
 
-            // Add shutdown hook
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                System.out.println("🛑 Shutting down gRPC server...");
-                server.shutdown();
-            }));
-
-            // Wait for termination
-            server.awaitTermination();
-
-        } catch (Exception e) {
-            System.err.println("❌ Server failed: " + e.getMessage());
-            e.printStackTrace();
-        }
+        // Unregister when server stops
+        Runtime.getRuntime().addShutdownHook(new Thread(advertiser::unregisterService));
     }
 }
