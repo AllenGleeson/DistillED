@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.distilled.enrolment";
+option java_outer_classname = "EnrolmentServiceProto";
+
+package enrolment;
+
+service EnrolmentService {
+  // Bi-directional streaming RPC
+  rpc ManageEnrolment(stream EnrolmentRequest) returns (stream EnrolmentResponse);
+}
+
+message EnrolmentRequest {
+  string student_id = 1;
+  string course_id = 2;
+  string action = 3;
+}
+
+message EnrolmentResponse {
+  string status = 1;
+  string message = 2;
+}
