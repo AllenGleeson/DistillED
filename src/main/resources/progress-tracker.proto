@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.distilled.progress";
+option java_outer_classname = "ProgressTrackerProto";
+
+package progress;
+
+service ProgressTracker {
+  // Client-streaming RPC: client sends multiple progress updates
+  // server returns a single summary response.
+  rpc UpdateProgress (stream ProgressUpdateRequest) returns (UpdateSummaryResponse);
+}
+
+// Message sent from client to server
+message ProgressUpdateRequest {
+  string student_id = 1;
+  string course_id = 2;
+  string module_name = 3;
+  float progress_percent = 4;
+}
+
+// Message sent from server back to client after processing the stream
+message UpdateSummaryResponse {
+  int32 updates_processed = 1;
+  float latest_progress_percent = 2;
+  string message = 3;
+}

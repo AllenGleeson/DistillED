@@ -5,7 +5,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>distilled</name>
   
-  <dependencies>
+  	<dependencies>
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
@@ -96,7 +96,6 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			
 		</plugins>
 	</build>
 </project>
