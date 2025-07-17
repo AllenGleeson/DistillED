@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.distilled.coursecatalog.CourseCatalogServiceImpl;
 import com.distilled.enrolment.EnrolmentServiceImpl;
-
+import com.distilled.progress.ProgressTrackerImpl;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -16,6 +16,7 @@ public class GrpcServer {
         Server server = ServerBuilder.forPort(port)
             .addService(new CourseCatalogServiceImpl())
             .addService(new EnrolmentServiceImpl())
+            .addService(new ProgressTrackerImpl())
             .build()
             .start();
 
