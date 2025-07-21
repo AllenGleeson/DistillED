@@ -1,17 +1,55 @@
 package com.distilled.progress;
 
 import io.grpc.stub.StreamObserver;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProgressTrackerImpl extends ProgressTrackerGrpc.ProgressTrackerImplBase {
 
-    private final Map<String, Float> progressStorage = new ConcurrentHashMap<>();
+    private static class LocalProgress {
+        String studentId;
+        String courseId;
+        float percent;
+
+        LocalProgress(String studentId, String courseId, float percent) {
+            this.studentId = studentId;
+            this.courseId = courseId;
+            this.percent = percent;
+        }
+    }
+
+    private final List<LocalProgress> progressList;
+
+    public ProgressTrackerImpl() {
+        progressList = new ArrayList<>();
+        progressList.add(new LocalProgress("user1", "1", 75.0f));
+        progressList.add(new LocalProgress("user1", "2", 40.0f));
+        progressList.add(new LocalProgress("user1", "3", 90.0f));
+        progressList.add(new LocalProgress("user1", "4", 0.0f));
+        progressList.add(new LocalProgress("user1", "5", 100.0f));
+        progressList.add(new LocalProgress("user1", "6", 55.0f));
+    }
+
+    @Override
+    public void getProgress(ProgressQueryRequest request, StreamObserver<ProgressResponse> responseObserver) {
+        float percent = 0.0f;
+        for (LocalProgress progress : progressList) {
+            if (progress.studentId.equals(request.getStudentId())
+                    && progress.courseId.equals(request.getCourseId())) {
+                percent = progress.percent;
+                break;
+            }
+        }
+        ProgressResponse response = ProgressResponse.newBuilder()
+            .setPercent(percent)
+            .setMessage("Progress fetched")
+            .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
 
     @Override
     public StreamObserver<ProgressUpdateRequest> updateProgress(StreamObserver<UpdateSummaryResponse> responseObserver) {
-
         return new StreamObserver<ProgressUpdateRequest>() {
             int updatesProcessed = 0;
             float lastProgress = 0f;
@@ -19,17 +57,27 @@ public class ProgressTrackerImpl extends ProgressTrackerGrpc.ProgressTrackerImpl
 
             @Override
             public void onNext(ProgressUpdateRequest request) {
+                String studentId = request.getStudentId();
+                String courseId = request.getCourseId();
                 float progress = request.getProgressPercent();
-                if (progress < 0.0 || progress > 100.0) {
-                    System.out.println("Invalid progress: " + progress);
-                    return; // Ignore invalid entries
-                }
 
-                String key = request.getStudentId() + "_" + request.getCourseId() + "_" + request.getModuleName();
-                progressStorage.put(key, progress);
+                boolean found = false;
+                for (int i = 0; i < progressList.size(); i++) {
+                    LocalProgress p = progressList.get(i);
+                    if (p.studentId.equals(studentId) && p.courseId.equals(courseId)) {
+                        // Update existing
+                        progressList.set(i, new LocalProgress(studentId, courseId, progress));
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    // Add new
+                    progressList.add(new LocalProgress(studentId, courseId, progress));
+                }
                 updatesProcessed++;
                 lastProgress = progress;
-                latestKey = key;
+                latestKey = studentId + "_" + courseId;
             }
 
             @Override
