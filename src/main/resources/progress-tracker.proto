@@ -8,8 +8,8 @@ package progress;
 
 service ProgressTracker {
   // Client-streaming RPC: client sends multiple progress updates
-  // server returns a single summary response.
   rpc UpdateProgress (stream ProgressUpdateRequest) returns (UpdateSummaryResponse);
+  rpc GetProgress (ProgressQueryRequest) returns (ProgressResponse);
 }
 
 // Message sent from client to server
@@ -25,4 +25,14 @@ message UpdateSummaryResponse {
   int32 updates_processed = 1;
   float latest_progress_percent = 2;
   string message = 3;
+}
+
+message ProgressQueryRequest {
+  string student_id = 1;
+  string course_id = 2;
+}
+
+message ProgressResponse {
+  float percent = 1;
+  string message = 2;
 }
