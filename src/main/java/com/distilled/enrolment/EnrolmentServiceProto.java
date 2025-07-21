@@ -37,11 +37,12 @@ public final class EnrolmentServiceProto {
       "EnrolmentRequest\022\022\n\nstudent_id\030\001 \001(\t\022\021\n\t" +
       "course_id\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\"4\n\021Enrol" +
       "mentResponse\022\016\n\006status\030\001 \001(\t\022\017\n\007message\030" +
-      "\002 \001(\t2d\n\020EnrolmentService\022P\n\017ManageEnrol" +
-      "ment\022\033.enrolment.EnrolmentRequest\032\034.enro" +
-      "lment.EnrolmentResponse(\0010\001B2\n\027com.disti" +
-      "lled.enrolmentB\025EnrolmentServiceProtoP\001b" +
-      "\006proto3"
+      "\002 \001(\t2\254\001\n\020EnrolmentService\022P\n\017ManageEnro" +
+      "lment\022\033.enrolment.EnrolmentRequest\032\034.enr" +
+      "olment.EnrolmentResponse(\0010\001\022F\n\tGetStatu" +
+      "s\022\033.enrolment.EnrolmentRequest\032\034.enrolme" +
+      "nt.EnrolmentResponseB2\n\027com.distilled.en" +
+      "rolmentB\025EnrolmentServiceProtoP\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
