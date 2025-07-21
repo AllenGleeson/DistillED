@@ -24,6 +24,16 @@ public final class ProgressTrackerProto {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_progress_UpdateSummaryResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_progress_ProgressQueryRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_progress_ProgressQueryRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_progress_ProgressResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_progress_ProgressResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -39,11 +49,16 @@ public final class ProgressTrackerProto {
       "\030\n\020progress_percent\030\004 \001(\002\"d\n\025UpdateSumma" +
       "ryResponse\022\031\n\021updates_processed\030\001 \001(\005\022\037\n" +
       "\027latest_progress_percent\030\002 \001(\002\022\017\n\007messag" +
-      "e\030\003 \001(\t2g\n\017ProgressTracker\022T\n\016UpdateProg" +
-      "ress\022\037.progress.ProgressUpdateRequest\032\037." +
-      "progress.UpdateSummaryResponse(\001B0\n\026com." +
-      "distilled.progressB\024ProgressTrackerProto" +
-      "P\001b\006proto3"
+      "e\030\003 \001(\t\"=\n\024ProgressQueryRequest\022\022\n\nstude" +
+      "nt_id\030\001 \001(\t\022\021\n\tcourse_id\030\002 \001(\t\"4\n\020Progre" +
+      "ssResponse\022\017\n\007percent\030\001 \001(\002\022\017\n\007message\030\002" +
+      " \001(\t2\262\001\n\017ProgressTracker\022T\n\016UpdateProgre" +
+      "ss\022\037.progress.ProgressUpdateRequest\032\037.pr" +
+      "ogress.UpdateSummaryResponse(\001\022I\n\013GetPro" +
+      "gress\022\036.progress.ProgressQueryRequest\032\032." +
+      "progress.ProgressResponseB0\n\026com.distill" +
+      "ed.progressB\024ProgressTrackerProtoP\001b\006pro" +
+      "to3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -69,6 +84,18 @@ public final class ProgressTrackerProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_progress_UpdateSummaryResponse_descriptor,
         new java.lang.String[] { "UpdatesProcessed", "LatestProgressPercent", "Message", });
+    internal_static_progress_ProgressQueryRequest_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_progress_ProgressQueryRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_progress_ProgressQueryRequest_descriptor,
+        new java.lang.String[] { "StudentId", "CourseId", });
+    internal_static_progress_ProgressResponse_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_progress_ProgressResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_progress_ProgressResponse_descriptor,
+        new java.lang.String[] { "Percent", "Message", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
