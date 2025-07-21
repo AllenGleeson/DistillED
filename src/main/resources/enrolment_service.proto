@@ -9,6 +9,7 @@ package enrolment;
 service EnrolmentService {
   // Bi-directional streaming RPC
   rpc ManageEnrolment(stream EnrolmentRequest) returns (stream EnrolmentResponse);
+  rpc GetStatus (EnrolmentRequest) returns (EnrolmentResponse);
 }
 
 message EnrolmentRequest {
