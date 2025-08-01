@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.concurrent.CountDownLatch;
 
+// This class handles gRPC service discovery using JmDNS
+// It allows the GUI to dynamically discover the host and port of the gRPC service
 public class GrpcServiceDiscovery {
-
+    // Constants for service discovery
     private static final String SERVICE_TYPE = "_grpc._tcp.local.";
     private static final String SERVICE_NAME = "DistillED-gRPC";
 
@@ -40,6 +42,7 @@ public class GrpcServiceDiscovery {
         }
 
         try {
+            // Create JmDNS instance
             JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
 
             final CountDownLatch latch = new CountDownLatch(1);
