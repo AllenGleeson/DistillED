@@ -9,16 +9,18 @@ import com.distilled.progress.ProgressTrackerImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
+// This class sets up the gRPC server for DistillED services
+// It registers the CourseCatalog, Enrolment, and ProgressTracker services
 public class GrpcServer {
     public static void main(String[] args) throws IOException, InterruptedException {
         int port = 50051;
 
         Server server = ServerBuilder.forPort(port)
-            .addService(new CourseCatalogServiceImpl())
-            .addService(new EnrolmentServiceImpl())
-            .addService(new ProgressTrackerImpl())
-            .build()
-            .start();
+                .addService(new CourseCatalogServiceImpl())
+                .addService(new EnrolmentServiceImpl())
+                .addService(new ProgressTrackerImpl())
+                .build()
+                .start();
 
         // Register service using JmDNS
         GrpcServiceAdvertiser advertiser = new GrpcServiceAdvertiser();
