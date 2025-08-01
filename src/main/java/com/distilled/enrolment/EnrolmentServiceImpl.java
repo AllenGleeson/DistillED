@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 public class EnrolmentServiceImpl extends EnrolmentServiceGrpc.EnrolmentServiceImplBase {
-	
+    
 	private static class LocalEnrolment {
         String studentId;
         String courseId;
@@ -18,18 +18,20 @@ public class EnrolmentServiceImpl extends EnrolmentServiceGrpc.EnrolmentServiceI
             this.enrolled = enrolled;
         }
     }
-
+    // Hardcoded list of enrolments
 	private final List<LocalEnrolment> enrolments = new ArrayList<>();
-
+    // Constructor to initialize the hardcoded enrolments
 	public EnrolmentServiceImpl() {
 	    Random random = new Random();
 	    for (int i = 1; i <= 6; i++) {
 	        enrolments.add(new LocalEnrolment("user1", String.valueOf(i), random.nextBoolean()));
 	    }
 	}
-
+    // Implementing the methods from the EnrolmentServiceGrpc service
     @Override
     public StreamObserver<EnrolmentRequest> manageEnrolment(StreamObserver<EnrolmentResponse> responseObserver) {
+        // This method handles enrolment requests in a streaming manner
+        // It allows clients to send multiple enrolment requests and receive responses for each
         return new StreamObserver<EnrolmentRequest>() {
 
             @Override
@@ -40,7 +42,7 @@ public class EnrolmentServiceImpl extends EnrolmentServiceGrpc.EnrolmentServiceI
 
                 String status;
                 String message;
-
+                // Handle enrolment or withdrawal based on the action
                 switch (action) {
                     case "enrol":
                         if (!isEnrolled(studentId, courseId)) {
@@ -90,6 +92,8 @@ public class EnrolmentServiceImpl extends EnrolmentServiceGrpc.EnrolmentServiceI
 
     @Override
     public void getStatus(EnrolmentRequest request, StreamObserver<EnrolmentResponse> responseObserver) {
+        // This method checks if a student is enrolled in a specific course
+        // It returns a response indicating the enrolment status
         String studentId = request.getStudentId();
         String courseId = request.getCourseId();
         boolean enrolled = isEnrolled(studentId, courseId);
@@ -109,6 +113,8 @@ public class EnrolmentServiceImpl extends EnrolmentServiceGrpc.EnrolmentServiceI
     }
 
     private boolean isEnrolled(String studentId, String courseId) {
+        // Check if the student is enrolled in the specified course
+        // This method iterates through the hardcoded enrolments to find a match
         return enrolments.stream()
                 .anyMatch(e -> e.studentId.equals(studentId) && e.courseId.equals(courseId) && e.enrolled);
     }

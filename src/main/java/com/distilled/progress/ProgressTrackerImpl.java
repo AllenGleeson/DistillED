@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProgressTrackerImpl extends ProgressTrackerGrpc.ProgressTrackerImplBase {
-
+    // Local class to hold progress data
     private static class LocalProgress {
         String studentId;
         String courseId;
@@ -17,9 +17,9 @@ public class ProgressTrackerImpl extends ProgressTrackerGrpc.ProgressTrackerImpl
             this.percent = percent;
         }
     }
-
+    // List to simulate a database of progress records
     private final List<LocalProgress> progressList;
-
+    // Constructor to initialize with some sample data
     public ProgressTrackerImpl() {
         progressList = new ArrayList<>();
         progressList.add(new LocalProgress("user1", "1", 75.0f));
@@ -32,6 +32,7 @@ public class ProgressTrackerImpl extends ProgressTrackerGrpc.ProgressTrackerImpl
 
     @Override
     public void getProgress(ProgressQueryRequest request, StreamObserver<ProgressResponse> responseObserver) {
+        // Find the progress for the given student and course
         float percent = 0.0f;
         for (LocalProgress progress : progressList) {
             if (progress.studentId.equals(request.getStudentId())
@@ -50,6 +51,7 @@ public class ProgressTrackerImpl extends ProgressTrackerGrpc.ProgressTrackerImpl
 
     @Override
     public StreamObserver<ProgressUpdateRequest> updateProgress(StreamObserver<UpdateSummaryResponse> responseObserver) {
+        // This method handles streaming updates for progress
         return new StreamObserver<ProgressUpdateRequest>() {
             int updatesProcessed = 0;
             float lastProgress = 0f;
@@ -63,6 +65,7 @@ public class ProgressTrackerImpl extends ProgressTrackerGrpc.ProgressTrackerImpl
 
                 boolean found = false;
                 for (int i = 0; i < progressList.size(); i++) {
+                    // Check if the progress for this student and course already exists
                     LocalProgress p = progressList.get(i);
                     if (p.studentId.equals(studentId) && p.courseId.equals(courseId)) {
                         // Update existing

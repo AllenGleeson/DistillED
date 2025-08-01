@@ -55,8 +55,10 @@ public class CourseCatalogServiceImpl extends CourseCatalogGrpc.CourseCatalogImp
             .build());
     }
 
+    // Implementing the methods from the CourseCatalogGrpc service
     @Override
     public void listCourses(Empty request, StreamObserver<Course> responseObserver) {
+        // Iterate through the hardcoded list of courses and send each one to the response observer
         for (Course course : courses) {
             responseObserver.onNext(course);
         }
@@ -65,6 +67,7 @@ public class CourseCatalogServiceImpl extends CourseCatalogGrpc.CourseCatalogImp
 
     @Override
     public void getCourse(CourseRequest request, StreamObserver<Course> responseObserver) {
+        // Find the course by ID in the hardcoded list
         int courseId = request.getId();
         for (Course course : courses) {
             if (course.getId() == courseId) {
@@ -73,7 +76,7 @@ public class CourseCatalogServiceImpl extends CourseCatalogGrpc.CourseCatalogImp
                 return;
             }
         }
-        // If not found, you can return an error or an empty course
+        // If not found returns an error
         responseObserver.onError(new Exception("Course not found"));
     }
 }
