@@ -11,25 +11,29 @@ import javax.swing.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+// This panel handles enrolment actions and displays enrolment status for a course
 public class EnrolmentPanel extends JPanel {
-    
+    // gRPC stubs for enrolment and progress services
     private EnrolmentServiceGrpc.EnrolmentServiceStub enrolmentStub;
     private EnrolmentServiceGrpc.EnrolmentServiceBlockingStub enrolmentBlockingStub;
     private ProgressTrackerGrpc.ProgressTrackerBlockingStub progressStub;
     private static final String USER_ID = "user1";
     private Course currentCourse = null;
     private ProgressPanel progressPanel;
-    
+
+    // gRPC service discovery utility
     public EnrolmentPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createTitledBorder("Enrolment"));
         initializeGrpcConnections();
     }
-    
+
+    // Set the progress panel to connect with enrolment actions
     public void setProgressPanel(ProgressPanel progressPanel) {
         this.progressPanel = progressPanel;
     }
-    
+
+    // Initialize gRPC connections for enrolment and progress services
     private void initializeGrpcConnections() {
         try {
             String host = GrpcServiceDiscovery.getServiceHost();
@@ -49,19 +53,21 @@ public class EnrolmentPanel extends JPanel {
                     "Connection Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
+    // Update the panel for a specific course
     public void updateForCourse(Course course) {
         currentCourse = course;
         removeAll();
-        
+
         // Check enrolment status
         boolean isEnrolled = checkEnrolmentStatus(course.getId());
         showEnrolmentControls(course.getId(), isEnrolled);
-        
+
         revalidate();
         repaint();
     }
-    
+
+    // Check if the user is enrolled in the course
     private boolean checkEnrolmentStatus(int courseId) {
         try {
             EnrolmentRequest request = EnrolmentRequest.newBuilder()
@@ -69,7 +75,7 @@ public class EnrolmentPanel extends JPanel {
                     .setCourseId(String.valueOf(courseId))
                     .setAction("status")
                     .build();
-            
+
             EnrolmentResponse response = enrolmentBlockingStub.getStatus(request);
             return "enrolled".equals(response.getStatus());
         } catch (Exception e) {
@@ -77,7 +83,8 @@ public class EnrolmentPanel extends JPanel {
             return false;
         }
     }
-    
+
+    // Show enrolment controls based on the user's enrolment status
     private void showEnrolmentControls(int courseId, boolean isEnrolled) {
         if (isEnrolled) {
             // Check if progress is 100% - if so, don't show withdraw button
@@ -95,14 +102,15 @@ public class EnrolmentPanel extends JPanel {
             add(enrolBtn);
         }
     }
-    
+
+    // Get the progress percentage for the current user in the specified course
     private float getProgressPercent(int courseId) {
         try {
             ProgressQueryRequest request = ProgressQueryRequest.newBuilder()
                     .setStudentId(USER_ID)
                     .setCourseId(String.valueOf(courseId))
                     .build();
-            
+
             ProgressResponse response = progressStub.getProgress(request);
             return response.getPercent();
         } catch (Exception e) {
@@ -110,32 +118,33 @@ public class EnrolmentPanel extends JPanel {
             return 0.0f;
         }
     }
-    
+
+    // Manage enrolment actions (enrol or withdraw) for the course
     private void manageEnrolment(int courseId, String action) {
         try {
             // Create a CountDownLatch to wait for the streaming response
             CountDownLatch latch = new CountDownLatch(1);
-            final String[] resultMessage = {""};
-            
-            StreamObserver<EnrolmentRequest> requestObserver = 
-                enrolmentStub.manageEnrolment(new StreamObserver<EnrolmentResponse>() {
-                    @Override
-                    public void onNext(EnrolmentResponse response) {
-                        resultMessage[0] = response.getMessage();
-                        latch.countDown();
-                    }
+            final String[] resultMessage = { "" };
 
-                    @Override
-                    public void onError(Throwable t) {
-                        resultMessage[0] = "Error: " + t.getMessage();
-                        latch.countDown();
-                    }
+            StreamObserver<EnrolmentRequest> requestObserver = enrolmentStub
+                    .manageEnrolment(new StreamObserver<EnrolmentResponse>() {
+                        @Override
+                        public void onNext(EnrolmentResponse response) {
+                            resultMessage[0] = response.getMessage();
+                            latch.countDown();
+                        }
 
-                    @Override
-                    public void onCompleted() {
-                        latch.countDown();
-                    }
-                });
+                        @Override
+                        public void onError(Throwable t) {
+                            resultMessage[0] = "Error: " + t.getMessage();
+                            latch.countDown();
+                        }
+
+                        @Override
+                        public void onCompleted() {
+                            latch.countDown();
+                        }
+                    });
 
             // Send the enrolment request
             EnrolmentRequest request = EnrolmentRequest.newBuilder()
@@ -143,7 +152,7 @@ public class EnrolmentPanel extends JPanel {
                     .setCourseId(String.valueOf(courseId))
                     .setAction(action)
                     .build();
-            
+
             requestObserver.onNext(request);
             requestObserver.onCompleted();
 
@@ -157,15 +166,15 @@ public class EnrolmentPanel extends JPanel {
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, 
-                    "Timeout waiting for enrolment response", 
-                    "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "Timeout waiting for enrolment response",
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, 
-                "Error managing enrolment: " + e.getMessage(),
-                "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Error managing enrolment: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-} 
+}
