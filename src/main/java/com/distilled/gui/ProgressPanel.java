@@ -11,20 +11,23 @@ import javax.swing.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+// This panel handles progress tracking for courses
 public class ProgressPanel extends JPanel {
-    
+    // gRPC stubs for progress and enrolment services
     private ProgressTrackerGrpc.ProgressTrackerBlockingStub progressBlockingStub;
     private ProgressTrackerGrpc.ProgressTrackerStub progressStub;
     private EnrolmentServiceGrpc.EnrolmentServiceBlockingStub enrolmentStub;
     private static final String USER_ID = "user1";
     private Course currentCourse = null;
-    
+
+    // Constructor to initialize the panel and gRPC connections
     public ProgressPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createTitledBorder("Progress"));
         initializeGrpcConnections();
     }
-    
+
+    // Initialize gRPC connections for progress and enrolment services
     private void initializeGrpcConnections() {
         try {
             String host = GrpcServiceDiscovery.getServiceHost();
@@ -44,25 +47,27 @@ public class ProgressPanel extends JPanel {
                     "Connection Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
+    // Update the panel for a specific course
     public void updateForCourse(Course course) {
         currentCourse = course;
         removeAll();
-        
+
         // Check enrolment status first
         boolean isEnrolled = checkEnrolmentStatus(course.getId());
-        
+
         // Show progress only if enrolled
         if (isEnrolled) {
             showProgressBar(course.getId());
         } else {
             add(new JLabel("Not enrolled - no progress to show"));
         }
-        
+
         revalidate();
         repaint();
     }
-    
+
+    // Check if the user is enrolled in the course
     private boolean checkEnrolmentStatus(int courseId) {
         try {
             EnrolmentRequest request = EnrolmentRequest.newBuilder()
@@ -70,7 +75,7 @@ public class ProgressPanel extends JPanel {
                     .setCourseId(String.valueOf(courseId))
                     .setAction("status")
                     .build();
-            
+
             EnrolmentResponse response = enrolmentStub.getStatus(request);
             return "enrolled".equals(response.getStatus());
         } catch (Exception e) {
@@ -78,14 +83,15 @@ public class ProgressPanel extends JPanel {
             return false;
         }
     }
-    
+
+    // Show progress bar and update button for the course
     private void showProgressBar(int courseId) {
         try {
             ProgressQueryRequest request = ProgressQueryRequest.newBuilder()
                     .setStudentId(USER_ID)
                     .setCourseId(String.valueOf(courseId))
                     .build();
-            
+
             ProgressResponse response = progressBlockingStub.getProgress(request);
             float progressPercent = response.getPercent();
 
@@ -95,7 +101,7 @@ public class ProgressPanel extends JPanel {
             progressBar.setStringPainted(true);
             progressBar.setString(String.format("Progress: %.1f%%", progressPercent));
             add(progressBar);
-            
+
             // Update progress button (only if not 100%)
             if (progressPercent < 100.0f) {
                 JButton updateBtn = new JButton("Update Progress (+10%)");
@@ -107,34 +113,35 @@ public class ProgressPanel extends JPanel {
             add(new JLabel("Error loading progress: " + e.getMessage()));
         }
     }
-    
+
+    // Update the progress for the course
     private void updateProgress(int courseId, float currentProgress) {
         try {
             float newProgress = Math.min(currentProgress + 10.0f, 100.0f);
-            
+
             // Create a CountDownLatch to wait for the streaming response
             CountDownLatch latch = new CountDownLatch(1);
-            final boolean[] success = {false};
-            
-            StreamObserver<ProgressUpdateRequest> requestObserver = 
-                progressStub.updateProgress(new StreamObserver<UpdateSummaryResponse>() {
-                    @Override
-                    public void onNext(UpdateSummaryResponse response) {
-                        success[0] = true;
-                        latch.countDown();
-                    }
+            final boolean[] success = { false };
 
-                    @Override
-                    public void onError(Throwable t) {
-                        System.err.println("Progress update error: " + t.getMessage());
-                        latch.countDown();
-                    }
+            StreamObserver<ProgressUpdateRequest> requestObserver = progressStub
+                    .updateProgress(new StreamObserver<UpdateSummaryResponse>() {
+                        @Override
+                        public void onNext(UpdateSummaryResponse response) {
+                            success[0] = true;
+                            latch.countDown();
+                        }
 
-                    @Override
-                    public void onCompleted() {
-                        latch.countDown();
-                    }
-                });
+                        @Override
+                        public void onError(Throwable t) {
+                            System.err.println("Progress update error: " + t.getMessage());
+                            latch.countDown();
+                        }
+
+                        @Override
+                        public void onCompleted() {
+                            latch.countDown();
+                        }
+                    });
 
             // Send the update request
             ProgressUpdateRequest request = ProgressUpdateRequest.newBuilder()
@@ -143,7 +150,7 @@ public class ProgressPanel extends JPanel {
                     .setModuleName("Module")
                     .setProgressPercent(newProgress)
                     .build();
-            
+
             requestObserver.onNext(request);
             requestObserver.onCompleted();
 
@@ -154,15 +161,15 @@ public class ProgressPanel extends JPanel {
                     updateForCourse(currentCourse);
                 }
             } else {
-                JOptionPane.showMessageDialog(this, 
-                    "Failed to update progress", 
-                    "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "Failed to update progress",
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, 
-                "Error updating progress: " + e.getMessage(),
-                "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Error updating progress: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-} 
+}
