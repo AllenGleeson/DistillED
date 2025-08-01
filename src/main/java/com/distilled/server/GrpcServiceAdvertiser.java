@@ -5,20 +5,22 @@ import javax.jmdns.ServiceInfo;
 import java.io.IOException;
 import java.net.InetAddress;
 
+// This class advertises the gRPC service using JmDNS
+// It allows other services to discover the gRPC server dynamically
 public class GrpcServiceAdvertiser {
 
     private JmDNS jmdns;
 
+    // Registers the gRPC service with JmDNS
     public void registerService(String serviceName, int port) {
         try {
             jmdns = JmDNS.create(InetAddress.getLocalHost());
 
             ServiceInfo serviceInfo = ServiceInfo.create(
-                "_grpc._tcp.local.",
-                serviceName,
-                port,
-                "path=/grpc"
-            );
+                    "_grpc._tcp.local.",
+                    serviceName,
+                    port,
+                    "path=/grpc");
 
             jmdns.registerService(serviceInfo);
 
@@ -29,6 +31,7 @@ public class GrpcServiceAdvertiser {
         }
     }
 
+    // Unregisters the gRPC service from JmDNS
     public void unregisterService() {
         if (jmdns != null) {
             jmdns.unregisterAllServices();
