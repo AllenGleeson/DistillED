@@ -6,19 +6,24 @@ option java_outer_classname = "EnrolmentServiceProto";
 
 package enrolment;
 
+// The enrolment service definition.
 service EnrolmentService {
-  // Bi-directional streaming RPC
+  // Bi-directional streaming RPC for managing enrolments
   rpc ManageEnrolment(stream EnrolmentRequest) returns (stream EnrolmentResponse);
+  
+  // Unary RPC to get enrolment status
   rpc GetStatus (EnrolmentRequest) returns (EnrolmentResponse);
 }
 
+// Request message for enrolment operations
 message EnrolmentRequest {
   string student_id = 1;
   string course_id = 2;
-  string action = 3;
+  string action = 3;  // e.g., "enrol", "unenrol", "check"
 }
 
+// Response message for enrolment operations
 message EnrolmentResponse {
-  string status = 1;
-  string message = 2;
+  string status = 1;   // e.g., "success", "failed", "pending"
+  string message = 2;  // Detailed response message
 }
