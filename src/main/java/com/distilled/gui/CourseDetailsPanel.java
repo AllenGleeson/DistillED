@@ -5,6 +5,7 @@ import com.distilled.coursecatalog.Course;
 import javax.swing.*;
 import java.awt.*;
 
+// This panel displays course details and connects to progress and enrolment panels
 public class CourseDetailsPanel extends JPanel {
     
     private final JTextArea courseDetailsArea = new JTextArea();

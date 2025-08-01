@@ -1,7 +1,5 @@
 package com.distilled.gui;
 
-import com.distilled.coursecatalog.Course;
-
 import javax.swing.*;
 import java.awt.*;
 
